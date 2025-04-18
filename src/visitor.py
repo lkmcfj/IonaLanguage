@@ -9,7 +9,7 @@ class ExtractAST(IonaVisitor):
         super().__init__()
         self.fresh_count = 0
         self.var_mapping = {}
-        self.existing_data_ctors = set()
+        self.existing_data_ctors = {}
     
     def add_to_mapping(self, var_name):
         if var_name in self.var_mapping:
@@ -23,7 +23,8 @@ class ExtractAST(IonaVisitor):
         ret = []
         for data_decl in ctx.dataDecl():
             ret.extend(data_decl.accept(self))
-        ret.append(ctx.expr().accept(self))
+        for exp in ctx.expr():
+            ret.append(exp.accept(self))
         return ret
 
     def visitDataDecl(self, ctx:IonaParser.DataDeclContext):
@@ -35,7 +36,7 @@ class ExtractAST(IonaVisitor):
         if ctor_name in self.existing_data_ctors:
             print('Duplicate data constructor:', ctor_name)
             sys.exit(1)
-        self.existing_data_ctors.add(ctor_name)
+        self.existing_data_ctors[ctor_name] = len(names) - 1
         return tree.DataConstructorDecl(ctor_name, len(names) - 1)
 
     def visitExpr1(self, ctx:IonaParser.Expr1Context):
@@ -97,7 +98,7 @@ class ExtractAST(IonaVisitor):
         if data_ctor not in self.existing_data_ctors:
             print('Unrecognized data constructor:', data_ctor)
             sys.exit(1)
-        return tree.DataConstructor(data_ctor)
+        return tree.DataConstructor(data_ctor if self.existing_data_ctors[data_ctor] == 0 else '_{}_Curry0'.format(data_ctor))
     
     def visitMatchExpr(self, ctx:IonaParser.MatchExprContext):
         arg = ctx.expr().accept(self)
@@ -118,9 +119,10 @@ class ExtractAST(IonaVisitor):
 
     def visitLetExpr(self, ctx:IonaParser.LetExprContext):
         name = ctx.LowerIdentifier().getText()
-        rhs = ctx.expr(0).accept(self)
         old_mapping = self.var_mapping.copy()
         name = self.add_to_mapping(name)
         body = ctx.expr(1).accept(self)
+        first_part = tree.Abstraction(name, body)
         self.var_mapping = old_mapping
-        return tree.LetBinding(name, rhs, body)
+        rhs = ctx.expr(0).accept(self)
+        return tree.Application(first_part, rhs)

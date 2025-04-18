@@ -17,9 +17,9 @@ WS :
     [ \t\r\n] -> skip
     ;
 
-program : dataDecl* expr EOF ;
+program : ((dataDecl | expr) ';')* EOF ;
 
-dataDecl : 'data' UpperIdentifier '=' dataDeclPart ('|' dataDeclPart)* ';' ;
+dataDecl : 'data' UpperIdentifier '=' dataDeclPart ('|' dataDeclPart)* ;
 dataDeclPart : UpperIdentifier+;
 
 expr

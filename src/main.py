@@ -57,6 +57,12 @@ struct _MatchBase {
         std::cout << "A pattern match\\n";
     }
 };
+
+struct _DataCtorCurryBase {
+    static void display() {
+        std::cout << "A (maybe curried) data constructor\\n";
+    }
+};
 '''
 
 stream = FileStream(sys.argv[1])
@@ -69,9 +75,14 @@ trees = root.accept(visitor)
 alloc = Allocator()
 with open(sys.argv[2], 'w') as f:
     f.write(RUNTIME)
-    for t in trees[:-1]:
-        t.gen([], alloc, f)
-    result = trees[-1].gen([], alloc, f)
+    results = []
+    for t in trees:
+        ret = t.gen([], alloc, f)
+        if ret is not None:
+            results.append(ret)
     f.write('int main() {\n')
-    f.write("    {}::display();\n".format(result))
+    for result in results:
+        f.write('    {\n')
+        f.write('        using result = {};\n'.format(result))
+        f.write('        result::display();\n    }\n')
     f.write('}')

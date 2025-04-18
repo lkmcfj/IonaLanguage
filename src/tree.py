@@ -64,10 +64,11 @@ class PatternMatching:
             cur_arg = c.data_ctor_name
             if len(c.var_names) > 0:
                 cur_arg = cur_arg + '<' + ', '.join(c.var_names) + '>'
-            writer.write('struct {}<{}> : _MatchBase {\n'.format(cur_match, ', '.join(ctx + [cur_arg])))
+            writer.write('struct {}<{}> : _MatchBase'.format(cur_match, ', '.join(ctx + [cur_arg])))
+            writer.write(' {\n')
             writer.write('    using result = ' + body + ';\n')
             writer.write('};\n\n')
-        return 'typename {}<{}, {}>::result'.format(cur_match, ', '.join(ctx), arg)
+        return 'typename {}<{}>::result'.format(cur_match, ', '.join(ctx + [arg]))
     
 class BinaryOperation:
     def __init__(self, op, lhs, rhs):
@@ -101,12 +102,28 @@ class DataConstructorDecl:
         self.name = name
         self.param_n = param_n
 
-class LetBinding:
-    def __init__(self, name, rhs, body):
-        self.name = name
-        self.rhs = rhs
-        self.body = body
+    def gen(self, ctx, allocator, writer):
+        writer.write(template_params(['_param' + str(i) for i in range(self.param_n)]))
+        writer.write('struct ' + self.name + ' {\n')
+        writer.write('    static void display() {\n')
+        writer.write('        std::cout << "A {}\\n";\n')
+        writer.write('    }\n')
+        writer.write('};\n')
+        for i in range(self.param_n - 1, -1, -1):
+            writer.write(template_params(['_param' + str(j) for j in range(i)]))
+            writer.write('struct _{}_Curry{} : _DataCtorCurryBase'.format(self.name, i))
+            writer.write(' {\n')
+            writer.write('    template <class _param{}>\n'.format(i))
+            next_struct_name = '_{}_Curry{}'.format(self.name, i + 1) if i < self.param_n - 1 else self.name
+            arg = ', '.join(['_param' + str(j) for j in range(i + 1)])
+            writer.write('    using apply = {}<{}>;\n'.format(next_struct_name, arg))
+            writer.write('};\n')
+        writer.write('\n')
+
 
 class DataConstructor:
     def __init__(self, name):
         self.name = name
+    
+    def gen(self, ctx, allocator, writer):
+        return self.name

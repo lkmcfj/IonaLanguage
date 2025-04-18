@@ -1,0 +1,50 @@
+data Bool = True | False;
+data BoolList = Empty | List Bool BoolList;
+
+(\x -> (match x with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2)) Empty;
+
+(\x -> (match x with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2)) (List True Empty);
+
+(\x -> (match x with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2)) (List False Empty);
+
+match Empty with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2;
+
+match List True Empty with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2;
+
+match List False Empty with
+| Empty -> 0
+| List head rest -> (
+    match head with
+    | True -> 1
+    | False -> 0
+) + 2;
