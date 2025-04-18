@@ -58,26 +58,26 @@ struct _DataCtorCurryBase {
 };
 struct True {
     static void display() {
-        std::cout << "A {}\n";
+        std::cout << "A True\n";
     }
 };
 
 struct False {
     static void display() {
-        std::cout << "A {}\n";
+        std::cout << "A False\n";
     }
 };
 
 struct Empty {
     static void display() {
-        std::cout << "A {}\n";
+        std::cout << "A Empty\n";
     }
 };
 
 template <class _param0, class _param1>
 struct List {
     static void display() {
-        std::cout << "A {}\n";
+        std::cout << "A List\n";
     }
 };
 template <class _param0>
