@@ -1,0 +1,10 @@
+data Bool = True | False;
+data BoolList = Empty | List Bool BoolList;
+
+True;
+List True (List False Empty);
+3 + 4;
+List False;
+List;
+let f = \x -> x in f;
+let f = \x -> x / 2 in f (23 * 34);
