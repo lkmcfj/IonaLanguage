@@ -106,7 +106,7 @@ class DataConstructorDecl:
         writer.write(template_params(['_param' + str(i) for i in range(self.param_n)]))
         writer.write('struct ' + self.name + ' {\n')
         writer.write('    static void display() {\n')
-        writer.write('        std::cout << "A {}\\n";\n'.format(self.name))
+        writer.write('        std::cout << "A value from data constructor {}\\n";\n'.format(self.name))
         writer.write('    }\n')
         writer.write('};\n')
         for i in range(self.param_n - 1, -1, -1):
