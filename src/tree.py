@@ -35,9 +35,11 @@ class Application:
     def gen(self, ctx, allocator, writer):
         rator = self.rator.gen(ctx,allocator, writer)
         rand = self.rand.gen(ctx, allocator, writer)
-        if isinstance(self.rator, Var):
+        #if isinstance(self.rator, Var):
+        #    rator = 'typename ' + rator
+        if not rator.startswith('typename '):
             rator = 'typename ' + rator
-        return '{}::apply<{}>'.format(rator, rand)
+        return '{}::template apply<{}>'.format(rator, rand)
 
 class PatternMatching:
 
