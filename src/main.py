@@ -4,6 +4,8 @@ from parsing.IonaParser import IonaParser
 from parsing.IonaLexer import IonaLexer
 from visitor import ExtractAST
 from utils import Allocator
+from antlr4.error.ErrorStrategy import BailErrorStrategy
+from antlr4.error.ErrorListener import ErrorListener
 
 RUNTIME = '''
 #include <iostream>
@@ -65,10 +67,17 @@ struct _DataCtorCurryBase {
 };
 '''
 
+class ExitOnErrorListener(ErrorListener):
+    def syntaxError(self, recognizer, offendingSymbol, line, column, msg, e):
+        print(f"Syntax error at line {line}, column {column}: {msg}", file=sys.stderr)
+        sys.exit(1)
+
 stream = FileStream(sys.argv[1])
 lexer = IonaLexer(stream)
 tokens = CommonTokenStream(lexer)
 parser = IonaParser(tokens)
+parser.removeErrorListeners()
+parser.addErrorListener(ExitOnErrorListener())
 root = parser.program()
 visitor = ExtractAST()
 trees = root.accept(visitor)
