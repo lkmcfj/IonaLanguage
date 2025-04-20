@@ -58,26 +58,26 @@ struct _DataCtorCurryBase {
 };
 struct True {
     static void display() {
-        std::cout << "A True\n";
+        std::cout << "A value from data constructor True\n";
     }
 };
 
 struct False {
     static void display() {
-        std::cout << "A False\n";
+        std::cout << "A value from data constructor False\n";
     }
 };
 
 struct Empty {
     static void display() {
-        std::cout << "A Empty\n";
+        std::cout << "A value from data constructor Empty\n";
     }
 };
 
 template <class _param0, class _param1>
 struct List {
     static void display() {
-        std::cout << "A List\n";
+        std::cout << "A value from data constructor List\n";
     }
 };
 template <class _param0>
@@ -263,15 +263,15 @@ struct _Match11<List<head, rest>> : _MatchBase {
 
 int main() {
     {
-        using result = _Abs0::apply<Empty>;
+        using result = typename _Abs0::template apply<Empty>;
         result::display();
     }
     {
-        using result = _Abs1::apply<_List_Curry0::apply<True>::apply<Empty>>;
+        using result = typename _Abs1::template apply<typename _List_Curry0::template apply<True>::template apply<Empty>>;
         result::display();
     }
     {
-        using result = _Abs2::apply<_List_Curry0::apply<False>::apply<Empty>>;
+        using result = typename _Abs2::template apply<typename _List_Curry0::template apply<False>::template apply<Empty>>;
         result::display();
     }
     {
@@ -279,11 +279,11 @@ int main() {
         result::display();
     }
     {
-        using result = typename _Match9<_List_Curry0::apply<True>::apply<Empty>>::result;
+        using result = typename _Match9<typename _List_Curry0::template apply<True>::template apply<Empty>>::result;
         result::display();
     }
     {
-        using result = typename _Match11<_List_Curry0::apply<False>::apply<Empty>>::result;
+        using result = typename _Match11<typename _List_Curry0::template apply<False>::template apply<Empty>>::result;
         result::display();
     }
 }

@@ -102,7 +102,7 @@ struct _Abs1 : _AbsBase {
 
 struct _Abs2 : _AbsBase {
     template <class f>
-    using apply = typename f::apply<typename _IntMul<_Int<23>, _Int<34>>::result>;
+    using apply = typename f::template apply<typename _IntMul<_Int<23>, _Int<34>>::result>;
 };
 
 struct _Abs3 : _AbsBase {
@@ -116,7 +116,7 @@ int main() {
         result::display();
     }
     {
-        using result = _List_Curry0::apply<True>::apply<_List_Curry0::apply<False>::apply<Empty>>;
+        using result = typename _List_Curry0::template apply<True>::template apply<typename _List_Curry0::template apply<False>::template apply<Empty>>;
         result::display();
     }
     {
@@ -124,7 +124,7 @@ int main() {
         result::display();
     }
     {
-        using result = _List_Curry0::apply<False>;
+        using result = typename _List_Curry0::template apply<False>;
         result::display();
     }
     {
@@ -132,11 +132,11 @@ int main() {
         result::display();
     }
     {
-        using result = _Abs0::apply<_Abs1>;
+        using result = typename _Abs0::template apply<_Abs1>;
         result::display();
     }
     {
-        using result = _Abs2::apply<_Abs3>;
+        using result = typename _Abs2::template apply<_Abs3>;
         result::display();
     }
 }

@@ -59,7 +59,7 @@ struct _DataCtorCurryBase {
 template <class x, class y>
 struct _Abs0 : _AbsBase {
     template <class z>
-    using apply = typename x::apply<y>::apply<z>;
+    using apply = typename x::template apply<y>::template apply<z>;
 };
 
 template <class x>
@@ -76,7 +76,7 @@ struct _Abs2 : _AbsBase {
 template <class x>
 struct _Abs3 : _AbsBase {
     template <class y>
-    using apply = typename _IntAdd<_Int<1>, typename x::apply<y>>::result;
+    using apply = typename _IntAdd<_Int<1>, typename x::template apply<y>>::result;
 };
 
 struct _Abs4 : _AbsBase {
@@ -90,5 +90,8 @@ struct _Abs5 : _AbsBase {
 };
 
 int main() {
-    _Abs2::apply<_Abs4>::apply<_Abs5>::apply<_Int<234>>::display();
+    {
+        using result = typename _Abs2::template apply<_Abs4>::template apply<_Abs5>::template apply<_Int<234>>;
+        result::display();
+    }
 }
